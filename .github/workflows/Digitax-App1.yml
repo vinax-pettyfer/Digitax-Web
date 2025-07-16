@@ -13,9 +13,9 @@ on:
     - master
 env:
   AZURE_STATIC_WEBAPP_NAME: Digitax-App1
-  APP_DIRECTORY: Digitax
+  APP_DIRECTORY: .             # ✅ app is in root directory
   API_DIRECTORY: ''
-  OUTPUT: wwwroot
+  OUTPUT: publish/wwwroot      # ✅ this is where Blazor WASM publishes output
   DEPLOYMENT_ENVIRONMENT: preview
 jobs:
   build_and_deploy_job:
