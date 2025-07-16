@@ -3,11 +3,11 @@ name: Azure Static Web Apps CI/CD
 on:
   push:
     branches:
-      - main  # or 'master' if that's your default
+      - master
   pull_request:
     types: [opened, synchronize, reopened, closed]
     branches:
-      - main
+      - master
 
 jobs:
   build_and_deploy_job:
@@ -17,15 +17,15 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Setup .NET SDK
+      - name: Setup .NET
         uses: actions/setup-dotnet@v4
         with:
           dotnet-version: '8.0.x'
 
-      - name: Build Blazor WebAssembly
+      - name: Publish Blazor WebAssembly
         run: |
-          cd Client             # 🔁 Change this if your Blazor project folder is different
-          dotnet publish -c Release -o build
+          cd Client
+          dotnet publish -c Release -o publish
 
       - name: Deploy to Azure Static Web Apps
         uses: Azure/static-web-apps-deploy@v1
@@ -33,18 +33,6 @@ jobs:
           azure_static_web_apps_api_token: ${{ secrets.Digitax_App1_SPN }}
           repo_token: ${{ secrets.GITHUB_TOKEN }}
           action: "upload"
-          app_location: "Client"                   # 🔁 Your Blazor folder name
-          output_location: "Client/build/wwwroot"  # Blazor static output
+          app_location: "Client"
+          output_location: "Client/publish/wwwroot"
           deployment_environment: "production"
-
-  close_pull_request_job:
-    if: github.event_name == 'pull_request' && github.event.action == 'closed'
-    name: Close Pull Request
-    runs-on: ubuntu-latest
-    steps:
-      - name: Close Pull Request
-        uses: Azure/static-web-apps-deploy@v1
-        with:
-          azure_static_web_apps_api_token: ${{ secrets.Digitax_App1_SPN }}
-          action: close
-          repo_token: ${{ secrets.GITHUB_TOKEN }}
