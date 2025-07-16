@@ -11,20 +11,18 @@ on:
 
 jobs:
   build_and_deploy_job:
-    if: github.event_name == 'push' || (github.event_name == 'pull_request' && github.event.action != 'closed')
-    name: Build and Deploy Blazor WASM
     runs-on: ubuntu-latest
+    name: Build and Deploy Blazor App
     steps:
       - uses: actions/checkout@v4
 
-      - name: Setup .NET
+      - name: Setup .NET Core
         uses: actions/setup-dotnet@v4
         with:
           dotnet-version: '8.0.x'
 
       - name: Publish Blazor WebAssembly
         run: |
-          cd Client
           dotnet publish -c Release -o publish
 
       - name: Deploy to Azure Static Web Apps
@@ -32,7 +30,7 @@ jobs:
         with:
           azure_static_web_apps_api_token: ${{ secrets.Digitax_App1_SPN }}
           repo_token: ${{ secrets.GITHUB_TOKEN }}
-          action: "upload"
-          app_location: "Client"
-          output_location: "Client/publish/wwwroot"
+          action: upload
+          app_location: "."
+          output_location: "publish/wwwroot"
           deployment_environment: "production"
